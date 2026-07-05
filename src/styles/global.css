@@ -47,8 +47,9 @@ nav{position:sticky; top:0; z-index:50; backdrop-filter:saturate(160%) blur(12px
 .nav-links{display:flex; gap:26px; align-items:center}
 .nav-links a{color:var(--muted); font-size:.92rem; font-weight:500}
 .nav-links a:hover{color:var(--ink)}
-.nav-cta{padding:9px 16px; border-radius:10px; background:var(--ink); color:var(--bg); font-weight:600; font-size:.9rem}
-.nav-cta:hover{opacity:.88}
+/* scoped under .nav-links so this beats `.nav-links a` and the text color actually applies */
+.nav-links a.nav-cta{padding:9px 16px; border-radius:10px; background:var(--ink); color:var(--bg); font-weight:600; font-size:.9rem}
+.nav-links a.nav-cta:hover{color:var(--bg); opacity:.88}
 
 /* hero */
 .hero{position:relative; padding:96px 0 80px; overflow:hidden}
