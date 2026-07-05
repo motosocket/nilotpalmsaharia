@@ -1,0 +1,64 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  /** Keep search engines out of a page. Homepage passes true for now. */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = 'Content-led Product Marketing & GTM in B2B SaaS. I turn product into story, then build the tools that turn story into pipeline.',
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+
+  <!-- add the js class before paint so reveal styles apply without a flash -->
+  <script is:inline>document.documentElement.classList.add('js')</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <slot />
+
+  <!-- Scroll-reveal. Degrades gracefully: without JS, .reveal stays fully visible. -->
+  <script is:inline>
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      el.style.transitionDelay = (Math.min(i % 6, 5) * 60) + 'ms';
+      io.observe(el);
+    });
+  </script>
+</body>
+</html>

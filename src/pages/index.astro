@@ -1,0 +1,129 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+// noindex is ON for the homepage on purpose. Remove noindex below when you want
+// Google to index this page under your name.
+---
+<Layout
+  title="Nilotpal M. Saharia | Content-led Product Marketing & GTM"
+  description="B2B SaaS marketer in HR tech. I turn product into story, then build the tools that turn story into pipeline."
+  noindex={true}
+>
+  <Header />
+
+  <header class="hero" id="top">
+    <div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+    <div class="hero-in">
+      <span class="eyebrow reveal"><span class="dot"></span> Open to remote roles</span>
+      <h1 class="reveal">I make product make sense to buyers,<br><span class="gradtext">and build the tools that convert them.</span></h1>
+      <p class="tag reveal">Content-led Product Marketing &amp; GTM · B2B SaaS · I build with AI</p>
+      <p class="intro reveal">B2B SaaS marketer in HR tech. I turn product into story, then build the tools that turn story into pipeline. Eight-plus years across content, SEO, and creative, with an MBA in Marketing.</p>
+      <div class="cta reveal">
+        <a class="btn primary" href="#work">See what I built</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/nilotpal-m-saharia/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <div class="hero-meta reveal">
+        <span>◇ Remote · Based in India</span>
+        <span>◇ nilotpalmsaharia@gmail.com</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="blk" id="work">
+    <div class="wrap">
+      <p class="lead-label reveal"><span>Featured build</span></p>
+      <h2 class="reveal">The HR Leader Simulator</h2>
+      <p class="sec-sub reveal">A working product I conceived, built, and shipped end to end with AI.</p>
+      <div class="feature reveal">
+        <div class="feature-in">
+          <h3>An interactive lead-gen tool, built solo with Claude Code</h3>
+          <p class="sub">Wired to HubSpot for lead capture. Concept to production, on my own.</p>
+          <ul class="flist">
+            <li>HR leaders play out a simulated year of recognition decisions and see the outcomes.</li>
+            <li>To get a personalized report, they enter their work email, captured straight into HubSpot as an identified lead.</li>
+            <li>The experience itself argues the category: by the email gate, the buyer has already felt the problem the product solves.</li>
+            <li>I owned the whole thing: concept, copy, decision logic, scoring, the report, and the integration.</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">Claude Code</span><span class="chip">HubSpot</span><span class="chip">Lead generation</span><span class="chip">Positioning</span><span class="chip">GTM</span>
+          </div>
+          <a class="btn primary" href="https://www.vantagecircle.com/tools/hr-leader-simulator" target="_blank" rel="noopener">View the live tool →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk" id="results" style="background:var(--bg2)">
+    <div class="wrap">
+      <p class="lead-label reveal"><span>Results</span></p>
+      <h2 class="reveal">Organic content that compounds</h2>
+      <p class="sec-sub reveal">I own SEO-led content driving organic acquisition on Google US and in AI Overviews for a global HR-tech platform. Trailing twelve months, across posts I authored:</p>
+      <div class="stats">
+        <div class="stat reveal"><div class="n">~5.7M</div><div class="l">annual search impressions</div></div>
+        <div class="stat reveal"><div class="n">~20K</div><div class="l">annual organic clicks</div></div>
+        <div class="stat reveal"><div class="n">60+</div><div class="l">authored SEO posts</div></div>
+        <div class="stat reveal"><div class="n">690K</div><div class="l">impressions on one flagship guide</div></div>
+      </div>
+      <p class="note reveal">Figures are conservative, since the window includes a sitewide algorithm change that depressed the back half of the year.</p>
+    </div>
+  </section>
+
+  <section class="blk" id="writing">
+    <div class="wrap">
+      <p class="lead-label reveal"><span>Selected writing</span></p>
+      <h2 class="reveal">Posts that rank and pull traffic</h2>
+      <p class="sec-sub reveal">A few of the pieces I've written that earn their keep in search.</p>
+      <div class="list reveal">
+        <a class="row" href="https://www.vantagecircle.com/en/blog/ice-breaker-games-for-work/" target="_blank" rel="noopener"><span class="t">50+ Icebreaker Games Your Team Will Actually Enjoy</span><span class="m">6.3K clicks / 689K impressions a year</span></a>
+        <a class="row" href="https://www.vantagecircle.com/en/blog/corporate-diwali-gifts-for-employees/" target="_blank" rel="noopener"><span class="t">34 Corporate Diwali Gifts for Employees</span><span class="m">4.7K clicks / 343K impressions</span></a>
+        <a class="row" href="https://www.vantagecircle.com/en/blog/constructive-feedback-examples/" target="_blank" rel="noopener"><span class="t">20 Constructive Feedback Examples</span><span class="m">179K impressions</span></a>
+        <a class="row" href="https://www.vantagecircle.com/en/blog/types-of-rewards/" target="_blank" rel="noopener"><span class="t">Types of Rewards for Employees</span><span class="m">page-one · 149K impressions</span></a>
+        <a class="row" href="https://www.vantagecircle.com/en/blog/giving-recognition-at-work/" target="_blank" rel="noopener"><span class="t">Giving Recognition at Work: 12 Manager-Tested Ways</span><span class="m">94K impressions</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk" id="about" style="background:var(--bg2)">
+    <div class="wrap">
+      <p class="lead-label reveal"><span>About</span></p>
+      <h2 class="reveal">What I do</h2>
+      <div class="about-grid" style="margin-top:20px">
+        <div class="about reveal">
+          <p>I'm a content-led product marketer for B2B SaaS. For the last three years I've built go-to-market content for a global HR-tech platform: positioning and messaging for CHROs and People leaders, and the guides, whitepapers, and case studies demand and sales teams run on.</p>
+          <p>Before that, eight years across content, SEO, and creative in SaaS and EdTech, including leading creative at an EdTech company, plus an MBA in Marketing.</p>
+          <p>What makes me different: I build. I use AI to ship new go-to-market surfaces, not just to write faster. I care about the whole loop: buyer insight, positioning, the asset, and the pipeline it creates.</p>
+        </div>
+        <div class="panel reveal">
+          <h4>What I bring</h4>
+          <ul>
+            <li>Positioning &amp; messaging</li>
+            <li>Go-to-market &amp; launches</li>
+            <li>SEO &amp; organic demand</li>
+            <li>Building tools with AI</li>
+            <li>HR-tech / people domain</li>
+            <li>Content &amp; storytelling</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <div class="cta-band-in">
+          <h2>Let's talk</h2>
+          <p>Open to remote Product Marketing &amp; GTM roles in B2B SaaS.</p>
+          <div class="cta" style="justify-content:center">
+            <a class="btn primary" href="mailto:nilotpalmsaharia@gmail.com">Email me</a>
+            <a class="btn ghost" href="https://www.linkedin.com/in/nilotpal-m-saharia/" target="_blank" rel="noopener">Connect on LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

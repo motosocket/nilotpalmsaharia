@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+// Drafts are visible while running `npm run dev`, hidden in the production build.
+const posts = (await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+<Layout
+  title="Blog | Nilotpal M. Saharia"
+  description="Writing on marketing, product marketing, GTM, building with AI, and career."
+>
+  <Header />
+
+  <div class="wrap page-head">
+    <h1 class="reveal">Blog</h1>
+    <p class="reveal">Notes on marketing, product marketing, GTM, building with AI, and the career road that goes with it.</p>
+  </div>
+
+  <section class="blk" style="padding-top:24px">
+    <div class="wrap">
+      {posts.length === 0 ? (
+        <p class="empty">No posts yet. Check back soon.</p>
+      ) : (
+        <div class="post-list">
+          {posts.map((post) => (
+            <a class="post-card reveal" href={`/blog/${post.id}/`}>
+              <div class="meta">
+                {fmt(post.data.pubDate)}
+                {import.meta.env.DEV && post.data.draft ? ' · Draft' : ''}
+              </div>
+              <h2>{post.data.title}</h2>
+              <p>{post.data.description}</p>
+              {post.data.tags.length > 0 && (
+                <div class="tags">
+                  {post.data.tags.map((t) => <span class="tag-pill">{t}</span>)}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <Footer />
+</Layout>
