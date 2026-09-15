@@ -99,6 +99,7 @@ h2{font-size:clamp(1.6rem,3.5vw,2.1rem); font-weight:700; margin-bottom:8px}
 
 /* secondary build card: lighter than .feature so the simulator stays the hero */
 .alt-h{font-size:1.25rem; font-weight:700; margin-bottom:14px}
+.build-alt + .alt-h{margin-top:30px}
 .build-alt{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; box-shadow:var(--shadow)}
 .build-alt .sub{color:var(--muted); margin-bottom:4px}
 .build-alt .flist{margin-bottom:20px}
