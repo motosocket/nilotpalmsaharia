@@ -13,9 +13,18 @@
   --shadow:0 10px 30px -12px rgba(20,40,80,.18);
   --shadow-lg:0 24px 60px -20px rgba(20,40,80,.30);
   --radius:18px; --max:1000px;
+  color-scheme:light;
 }
+
+/* Theme resolution, in precedence order:
+   1. no data-theme  -> follow the operating system
+   2. data-theme="light" -> force light, even if the OS is dark
+   3. data-theme="dark"  -> force dark, even if the OS is light
+   The dark tokens appear twice on purpose, once for the system default and
+   once for the explicit choice. CSS cannot share a block across a media
+   query boundary. KEEP THE TWO LISTS IDENTICAL. */
 @media (prefers-color-scheme: dark){
-  :root{
+  :root:not([data-theme="light"]){
     --bg:#0a0f1c; --bg2:#0d1424; --ink:#eaf0fb; --muted:#93a3c2; --line:#1e2a44;
     --surface:#111a2e; --surface2:#0f1830;
     --brand:#5b9be0; --brand-d:#7fb0e8; --violet:#8f7dff; --accent:#ff7d6f;
@@ -23,7 +32,18 @@
     --grad-soft:linear-gradient(120deg,#132a4a 0%,#1c1f45 100%);
     --shadow:0 10px 30px -12px rgba(0,0,0,.5);
     --shadow-lg:0 24px 60px -20px rgba(0,0,0,.6);
+    color-scheme:dark;
   }
+}
+:root[data-theme="dark"]{
+    --bg:#0a0f1c; --bg2:#0d1424; --ink:#eaf0fb; --muted:#93a3c2; --line:#1e2a44;
+    --surface:#111a2e; --surface2:#0f1830;
+    --brand:#5b9be0; --brand-d:#7fb0e8; --violet:#8f7dff; --accent:#ff7d6f;
+    --grad:linear-gradient(120deg,#3b82c4 0%,#6d7bff 55%,#a06dff 100%);
+    --grad-soft:linear-gradient(120deg,#132a4a 0%,#1c1f45 100%);
+    --shadow:0 10px 30px -12px rgba(0,0,0,.5);
+    --shadow-lg:0 24px 60px -20px rgba(0,0,0,.6);
+    color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -55,6 +75,27 @@ nav{position:sticky; top:0; z-index:50; backdrop-filter:saturate(160%) blur(12px
 /* scoped under .nav-links so this beats `.nav-links a` and the text color actually applies */
 .nav-links a.nav-cta{padding:9px 16px; border-radius:10px; background:var(--ink); color:var(--bg); font-weight:600; font-size:.9rem}
 .nav-links a.nav-cta:hover{color:var(--bg); opacity:.88}
+
+/* theme toggle */
+.theme-toggle{
+  display:grid; place-items:center; width:36px; height:36px; padding:0;
+  border-radius:10px; border:1px solid var(--line); background:var(--surface);
+  color:var(--muted); cursor:pointer; flex:none;
+  transition:color .2s ease, border-color .2s ease, background .2s ease;
+}
+.theme-toggle:hover{color:var(--ink); border-color:var(--muted); background:var(--surface2)}
+.theme-toggle svg{width:17px; height:17px; display:block}
+
+/* Which icon shows is decided in CSS, using the same precedence as the tokens,
+   so the button is correct on first paint without waiting for JavaScript. */
+.theme-toggle .i-sun{display:none}
+.theme-toggle .i-moon{display:block}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .theme-toggle .i-sun{display:block}
+  :root:not([data-theme="light"]) .theme-toggle .i-moon{display:none}
+}
+:root[data-theme="dark"] .theme-toggle .i-sun{display:block}
+:root[data-theme="dark"] .theme-toggle .i-moon{display:none}
 
 /* hero */
 .hero{position:relative; padding:96px 0 80px; overflow:hidden}
