@@ -38,8 +38,14 @@ src/
   content/
     blog/                # Markdown posts live here
   content.config.ts      # blog content collection + frontmatter schema
+  pages/
+    404.astro            # not-found page
   styles/
     global.css           # the shared design system (light + dark)
+public/                  # copied to the site root as-is
+  og.png                 # 1200x630 link-preview card
+  favicon.svg            # the NS brandmark
+  robots.txt
 ```
 
 ## Add a new blog post
@@ -70,6 +76,29 @@ src/
 House style: short, clear sentences, conversational but professional, real
 statistics only. **Never use em dashes.** Use commas, colons, or periods.
 
+## The resume
+
+**The site does not host the resume, and must not.** This GitHub repo is public,
+so anything committed here (phone number, full work history) is browsable by
+anyone who finds the repo, and git history is permanent. `noindex` does nothing
+about that.
+
+`public/nilotpal-m-saharia-resume.pdf` is gitignored. It can sit there for local
+dev, but it is never committed and never deploys. Send the resume directly to
+the recruiter instead.
+
+If you ever want a download button on the site, make the repo private first.
+
+## Link previews (og.png)
+
+`public/og.png` is what renders when the site's URL is pasted into an email,
+LinkedIn, or Slack. Since the site is shared by direct link rather than found in
+search, that card is the first impression, so it is worth keeping current.
+
+It was generated from an SVG with `sharp` (already a dependency via Astro). To
+change the wording, edit the SVG source and re-render at 1200x630. Any image
+editor works too. Keep it at 1200x630.
+
 ## Indexing (noindex)
 
 Search-engine indexing is controlled per page via the `noindex` prop on
@@ -77,7 +106,23 @@ Search-engine indexing is controlled per page via the `noindex` prop on
 
 - The **homepage** passes `noindex={true}` on purpose (see `src/pages/index.astro`).
   Remove that prop when you want Google to index the homepage under your name.
+- The **404 page** is noindex too.
 - **Blog posts are indexable** by default.
+
+Because the homepage is private but the blog is public, nothing indexable is
+allowed to link back to `/`. That is why `Header.astro` points its brandmark at
+`/blog` when the current path starts with `/blog`. If you add navigation, keep
+that rule: **no link from a blog page to the homepage**, or a Google result for
+a post becomes a door into the portfolio.
+
+`robots.txt` deliberately allows crawling. A `Disallow` rule would stop the
+crawler from ever reading the `noindex` tag, which is what actually keeps the
+page out of results.
+
+Note that `noindex` is not access control. `nilotpalmsaharia.pages.dev` is
+guessable from your name, and anyone with the URL can read everything. If that
+matters, rename the Pages project to something random or put Cloudflare Access
+in front of it.
 
 ## Deploy (Cloudflare Pages)
 

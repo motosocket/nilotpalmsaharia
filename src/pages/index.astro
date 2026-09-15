@@ -13,10 +13,12 @@ import Footer from '../components/Footer.astro';
 >
   <Header />
 
+  <main id="main">
+
   <header class="hero" id="top">
     <div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
     <div class="hero-in">
-      <h1 class="reveal">I make product make sense to buyers,<br><span class="gradtext">and build the tools that convert them.</span></h1>
+      <h1 class="reveal"><span class="l1">I make product make sense to buyers,</span> <span class="gradtext">and build the tools that convert them.</span></h1>
       <p class="tag reveal">Content-led Product Marketing &amp; GTM · B2B SaaS · I build with AI</p>
       <p class="intro reveal">B2B SaaS marketer in HR tech. I turn product into story, then build the tools that turn story into pipeline. Eight-plus years across content, SEO, and creative, with an MBA in Marketing.</p>
       <div class="cta reveal">
@@ -37,17 +39,33 @@ import Footer from '../components/Footer.astro';
       <div class="feature reveal">
         <div class="feature-in">
           <h3>An interactive lead-gen tool, built solo with Claude Code</h3>
-          <p class="sub">Wired to HubSpot for lead capture. Concept to production, on my own.</p>
+          <p class="sub">Nobody briefed it. Wired to HubSpot for lead capture. Concept to production, on my own.</p>
           <ul class="flist">
+            <li>High-traffic blog readers were arriving and leaving anonymous. I built the answer instead of writing another post about it.</li>
             <li>HR leaders play out a simulated year of recognition decisions and see the outcomes.</li>
-            <li>To get a personalized report, they enter their work email, captured straight into HubSpot as an identified lead.</li>
+            <li>To get a personalized report, they enter their work email, captured straight into HubSpot as an identified, source-tagged lead.</li>
             <li>The experience itself argues the category: by the email gate, the buyer has already felt the problem the product solves.</li>
-            <li>I owned the whole thing: concept, copy, decision logic, scoring, the report, and the integration.</li>
+            <li>I owned concept, copy, decision logic, scoring, the report, and the integration. I am not an engineer and had never shipped software before.</li>
           </ul>
           <div class="chips">
             <span class="chip">Claude Code</span><span class="chip">HubSpot</span><span class="chip">Lead generation</span><span class="chip">Positioning</span><span class="chip">GTM</span>
           </div>
           <a class="btn primary" href="https://www.vantagecircle.com/tools/hr-leader-simulator" target="_blank" rel="noopener">View the live tool →</a>
+        </div>
+      </div>
+
+      <p class="lead-label reveal" style="margin-top:44px"><span>Also built</span></p>
+      <h3 class="alt-h reveal">An agentic content pipeline, running my own editorial operation</h3>
+      <div class="build-alt reveal">
+        <p class="sub">A three-stage system on Claude Code, brief to draft to pre-publish QA.</p>
+        <ul class="flist">
+          <li>A brief generator that assembles SEO briefs from Search Console and Ahrefs data, competitor crawls, and an internal knowledge base.</li>
+          <li>A drafting skill tuned to a house voice.</li>
+          <li>A pre-publish QA pass checking internal links, metadata, and render integrity.</li>
+          <li>I set the direction, write the prompts, and review at each stage. The system handles the repeatable part. I keep the final call on the angle, the argument, and the last edit.</li>
+        </ul>
+        <div class="chips" style="margin-bottom:0">
+          <span class="chip">Claude Code</span><span class="chip">Agentic workflows</span><span class="chip">Editorial ops</span><span class="chip">SEO</span>
         </div>
       </div>
     </div>
@@ -108,6 +126,57 @@ import Footer from '../components/Footer.astro';
     </div>
   </section>
 
+  <section class="blk" id="career">
+    <div class="wrap">
+      <p class="lead-label reveal"><span>Career</span></p>
+      <h2 class="reveal">The road here</h2>
+      <p class="sec-sub reveal">Eight-plus years across B2B SaaS, EdTech, and early-stage marketing, plus a year running my own unit.</p>
+
+      <ol class="timeline">
+        <li class="tl reveal">
+          <div class="tl-when">May 2023 <span>&ndash;</span> Present</div>
+          <div class="tl-body">
+            <h3>Vantage Circle</h3>
+            <p class="tl-role">Assistant Manager, Content Marketing</p>
+            <p class="tl-note">Global employee engagement and recognition platform. Promoted twice in three years, from Content Marketing Specialist to Senior. I own the editorial standard and give the final edit on everything the function publishes, ghostwrite for the CEO and executive committee advisers, and open new verticals with buyer's guides for manufacturing and long-form for pharma.</p>
+          </div>
+        </li>
+
+        <li class="tl reveal">
+          <div class="tl-when">May 2022 <span>&ndash;</span> Apr 2023</div>
+          <div class="tl-body">
+            <h3>Tata Indicash ATM Services</h3>
+            <p class="tl-role">Franchise Partner</p>
+            <p class="tl-note">Ran a franchise unit single-handed: setup, vendor and logistics coordination, compliance, operations, and P&amp;L through to payback. Fixed deadlines, with nobody else to chase them.</p>
+          </div>
+        </li>
+
+        <li class="tl reveal">
+          <div class="tl-when">Aug 2019 <span>&ndash;</span> May 2022</div>
+          <div class="tl-body">
+            <h3>BYJU'S</h3>
+            <p class="tl-role">Lead Creative</p>
+            <p class="tl-note">EdTech. Turned complex, technical subject matter into content large audiences actually finished, holding a quality bar across high volume. Wrote the visual briefs and storyboards that directed designers and animators, and advanced through three roles to lead a small team.</p>
+          </div>
+        </li>
+
+        <li class="tl reveal">
+          <div class="tl-when">Mar 2017 <span>&ndash;</span> May 2019</div>
+          <div class="tl-body">
+            <h3>Jaika Hospitality Ventures</h3>
+            <p class="tl-role">Marketing Manager</p>
+            <p class="tl-note">Ran marketing for a physical, consumer-facing business: local campaigns and promotions to drive footfall, then the conversation and the close. Joined in business development and became its first marketing manager.</p>
+          </div>
+        </li>
+      </ol>
+
+      <p class="note reveal" style="font-style:normal">
+        MBA in Marketing, National School of Business (University of Mysore).
+        BBA in Marketing, Dibrugarh University.
+      </p>
+    </div>
+  </section>
+
   <section class="blk">
     <div class="wrap">
       <div class="cta-band reveal">
@@ -122,6 +191,8 @@ import Footer from '../components/Footer.astro';
       </div>
     </div>
   </section>
+
+  </main>
 
   <Footer />
 </Layout>

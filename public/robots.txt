@@ -1,0 +1,11 @@
+# Crawling is allowed on purpose.
+#
+# The homepage is kept out of search with a noindex meta tag, not with a
+# Disallow rule. A disallowed page cannot be crawled, so the crawler never
+# reads the noindex tag, and Google can still list a bare URL it found
+# elsewhere. Allowing the crawl is what makes the noindex actually stick.
+#
+# Blog posts are indexable by design.
+
+User-agent: *
+Allow: /

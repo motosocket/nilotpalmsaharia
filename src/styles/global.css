@@ -34,6 +34,11 @@ h1,h2,h3,.brandmark{font-family:"Sora",sans-serif; letter-spacing:-.02em}
 .wrap{max-width:var(--max); margin:0 auto; padding:0 24px}
 .gradtext{background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent}
 
+/* skip link: visible only once focused by keyboard */
+.skip-link{position:absolute; left:-9999px; top:0; z-index:100; padding:12px 18px; border-radius:0 0 12px 0;
+  background:var(--ink); color:var(--bg); font-weight:600; font-size:.92rem}
+.skip-link:focus{left:0}
+
 /* reveal */
 html.js .reveal{opacity:0; transform:translateY(20px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)}
 html.js .reveal.in{opacity:1; transform:none}
@@ -59,10 +64,10 @@ nav{position:sticky; top:0; z-index:50; backdrop-filter:saturate(160%) blur(12px
 .b2{width:480px; height:480px; background:radial-gradient(circle,#6d5cf0,transparent 65%); top:-80px; right:-120px}
 .b3{width:420px; height:420px; background:radial-gradient(circle,#ff6b5c,transparent 68%); bottom:-200px; left:30%; opacity:.5}
 .hero-in{position:relative; z-index:1; max-width:var(--max); margin:0 auto; padding:0 24px}
-.eyebrow{display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border-radius:999px;
-  background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); font-size:.82rem; font-weight:600; color:var(--muted); margin-bottom:22px}
-.dot{width:8px; height:8px; border-radius:50%; background:#22c55e; box-shadow:0 0 0 4px rgba(34,197,94,.18)}
 .hero h1{font-size:clamp(2.4rem,6vw,4rem); font-weight:800; line-height:1.05; margin-bottom:20px}
+/* The headline reads as two deliberate lines once there is room for it. Below
+   that it wraps on its own instead of breaking at a forced, awkward point. */
+@media(min-width:900px){ .hero h1 .l1{display:block} }
 .hero .tag{font-size:clamp(1.05rem,2.4vw,1.35rem); font-weight:600; color:var(--ink); margin-bottom:18px}
 .hero p.intro{font-size:1.1rem; color:var(--muted); max-width:620px; margin-bottom:30px}
 .cta{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
@@ -92,6 +97,12 @@ h2{font-size:clamp(1.6rem,3.5vw,2.1rem); font-weight:700; margin-bottom:8px}
 .chips{display:flex; flex-wrap:wrap; gap:9px; margin-bottom:24px}
 .chip{font-size:.8rem; font-weight:600; padding:6px 13px; border-radius:999px; background:var(--grad-soft); color:var(--brand-d); border:1px solid var(--line)}
 
+/* secondary build card: lighter than .feature so the simulator stays the hero */
+.alt-h{font-size:1.25rem; font-weight:700; margin-bottom:14px}
+.build-alt{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px 30px; box-shadow:var(--shadow)}
+.build-alt .sub{color:var(--muted); margin-bottom:4px}
+.build-alt .flist{margin-bottom:20px}
+
 /* stats */
 .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
 .stat{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px 18px; text-align:center; box-shadow:var(--shadow); transition:transform .25s ease, box-shadow .25s ease}
@@ -118,6 +129,23 @@ h2{font-size:clamp(1.6rem,3.5vw,2.1rem); font-weight:700; margin-bottom:8px}
 .about .panel ul{list-style:none; display:grid; gap:9px}
 .about .panel li{padding-left:22px; position:relative; color:var(--ink); font-size:.95rem}
 .about .panel li::before{content:"✦"; position:absolute; left:0; color:var(--violet)}
+
+/* career timeline */
+.timeline{list-style:none; display:grid; gap:0; margin-top:6px; position:relative}
+.tl{display:grid; grid-template-columns:172px 1fr; gap:24px; padding:22px 0 26px; position:relative}
+/* the rail sits under the dot column and stops at the last item */
+.tl::before{content:""; position:absolute; left:181px; top:0; bottom:0; width:2px; background:var(--line)}
+.tl:first-child::before{top:14px}
+.tl:last-child::before{bottom:auto; height:14px}
+.tl::after{content:""; position:absolute; left:176px; top:12px; width:12px; height:12px; border-radius:50%;
+  background:var(--grad); box-shadow:0 0 0 4px var(--bg)}
+.tl-when{font-size:.84rem; font-weight:600; color:var(--muted); font-variant-numeric:tabular-nums;
+  text-align:right; padding-top:8px; white-space:nowrap}
+.tl-when span{opacity:.5; margin:0 2px}
+.tl-body{padding-left:8px}
+.tl-body h3{font-size:1.12rem; font-weight:700; margin-bottom:2px}
+.tl-role{font-size:.95rem; font-weight:600; color:var(--brand); margin-bottom:8px}
+.tl-note{color:var(--muted); font-size:.95rem; max-width:62ch}
 
 /* CTA band */
 .cta-band{margin:20px 0 0; border-radius:24px; padding:2px; background:var(--grad); box-shadow:var(--shadow-lg)}
@@ -180,11 +208,41 @@ footer{padding:40px 0; border-top:1px solid var(--line); color:var(--muted); fon
 .post-foot .tags{margin:0}
 
 @media(max-width:760px){
+  .tl{grid-template-columns:1fr; gap:4px; padding:0 0 26px 26px}
+  .tl::before{left:4px}
+  .tl:first-child::before{top:8px}
+  .tl::after{left:0; top:6px}
+  .tl-when{text-align:left; padding-top:0; margin-bottom:4px}
+  .tl-body{padding-left:0}
+
   .nav-links{gap:16px}
   .stats{grid-template-columns:repeat(2,1fr)}
   .about-grid{grid-template-columns:1fr}
   .row{flex-direction:column; align-items:flex-start; gap:4px}
   .row .m{white-space:normal}
   .feature-in{padding:26px 22px}
+  .build-alt{padding:22px 20px}
   .post-card{padding:22px}
+}
+
+/* =========================================================
+   Accessibility
+   ========================================================= */
+
+/* Keyboard focus needs to be visible everywhere, including on the gradient
+   buttons where the default ring disappears against the background. */
+:focus-visible{outline:2px solid var(--brand); outline-offset:3px; border-radius:6px}
+
+/* Honour the OS "reduce motion" setting: no smooth scroll, no reveal slide,
+   no hover lift, and the hero aurora holds still. */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  html.js .reveal{opacity:1; transform:none}
+  .btn:hover,.stat:hover,.post-card:hover{transform:none}
 }

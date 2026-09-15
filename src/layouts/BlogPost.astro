@@ -16,9 +16,15 @@ const fmt = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 <!-- Blog posts are indexable (noindex defaults to false). -->
-<Layout title={`${title} | Nilotpal M. Saharia`} description={description}>
+<Layout
+  title={`${title} | Nilotpal M. Saharia`}
+  description={description}
+  ogType="article"
+  publishedTime={pubDate.toISOString()}
+>
   <Header />
 
+  <main id="main">
   <article class="post">
     <div class="wrap">
       <div class="post-header reveal">
@@ -44,6 +50,7 @@ const fmt = (d: Date) =>
       )}
     </div>
   </article>
+  </main>
 
   <Footer />
 </Layout>

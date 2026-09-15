@@ -1,9 +1,16 @@
 ---
 // Shared top nav.
+//
+// The homepage is noindex but the blog is indexable, so an indexed post must not
+// hand a visitor a link into the private portfolio. On blog pages the brandmark
+// points at /blog instead of /, which keeps the blog usable on its own while
+// leaving the homepage reachable only from a link that was sent directly.
+const isBlog = Astro.url.pathname.startsWith('/blog');
+const brandHref = isBlog ? '/blog' : '/';
 ---
 <nav>
   <div class="nav-in">
-    <a class="brandmark" href="/"><span class="mk">NS</span> Nilotpal M. Saharia</a>
+    <a class="brandmark" href={brandHref}><span class="mk">NS</span> Nilotpal M. Saharia</a>
     <div class="nav-links">
       <a href="/blog">Blog</a>
       <a class="nav-cta" href="mailto:nilotpalmsaharia@gmail.com">Get in touch</a>

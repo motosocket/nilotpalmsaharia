@@ -21,3 +21,6 @@ pnpm-debug.log*
 
 # jetbrains
 .idea/
+
+# resume is shared directly, never committed to this public repo
+public/nilotpal-m-saharia-resume.pdf
