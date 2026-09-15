@@ -85,6 +85,7 @@ import Footer from '../../components/Footer.astro';
 </Layout>
 
 <style>
+  /* Scoped: these elements exist in the template, so Astro's scoping reaches them. */
   .page-head .privacy{
     font-size:.95rem; background:var(--surface); border:1px solid var(--line);
     border-radius:12px; padding:14px 18px; margin-top:18px; max-width:640px;
@@ -102,36 +103,60 @@ import Footer from '../../components/Footer.astro';
   .drop-actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
   .drop-actions .btn{cursor:pointer; border:none; font-family:inherit}
   .drop-actions .btn.ghost{border:1px solid var(--line)}
-
   .status{margin-top:16px; font-size:.92rem; color:var(--muted)}
   .status.err{color:var(--accent); font-weight:600}
-
-  #results{margin-top:30px}
-  #summary{margin-bottom:10px}
-  .res{margin-top:40px}
+  .res{margin-top:46px}
   .res h2{font-size:1.4rem; margin-bottom:6px}
+  @media(max-width:760px){ .drop{padding:32px 18px} .res h2{font-size:1.25rem} }
+</style>
 
-  .tbl-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius);
-    background:var(--surface); box-shadow:var(--shadow)}
-  table{border-collapse:collapse; width:100%; font-size:.9rem; min-width:620px}
-  th,td{padding:12px 16px; text-align:left; border-bottom:1px solid var(--line)}
-  th{font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
-    font-weight:700; white-space:nowrap; background:var(--surface2)}
-  tr:last-child td{border-bottom:none}
-  td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
-  td.q{font-weight:500; max-width:420px; overflow-wrap:anywhere}
-  .gain{color:var(--brand); font-weight:700}
-  .empty-row{padding:26px; text-align:center; color:var(--muted)}
+<style is:global>
+  /* Global on purpose: the tables and the method copy are built at runtime with
+     innerHTML, so they never receive Astro's scoping attribute and a scoped rule
+     would not match them. Every selector is prefixed with #results, which exists
+     only on this page, so nothing leaks to the rest of the site. */
+  #results{margin-top:34px}
+  #results #summary{margin-bottom:6px}
 
-  .method{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
-    padding:24px 26px; color:var(--muted); font-size:.95rem}
-  .method p{margin-bottom:10px}
-  .method p:last-child{margin-bottom:0}
-  .method strong{color:var(--ink)}
+  #results .tbl-wrap{
+    margin-top:18px; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--surface); box-shadow:var(--shadow);
+    overflow:auto; max-height:620px;
+  }
+  #results table{border-collapse:separate; border-spacing:0; width:100%; min-width:660px; font-size:.92rem}
+  #results thead th{
+    position:sticky; top:0; z-index:1;
+    background:var(--surface2); color:var(--muted);
+    font-size:.71rem; font-weight:700; text-transform:uppercase; letter-spacing:.09em;
+    text-align:left; white-space:nowrap; padding:13px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  #results tbody td{padding:13px 18px; border-bottom:1px solid var(--line); vertical-align:middle}
+  #results tbody tr:last-child td{border-bottom:none}
+  #results tbody tr:hover{background:var(--surface2)}
+
+  #results th.num,#results td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+  #results td.q{font-weight:500; color:var(--ink); max-width:360px; overflow-wrap:anywhere; line-height:1.45}
+  #results td.gain{color:var(--brand); font-weight:700}
+  #results .pos{
+    display:inline-block; min-width:46px; padding:3px 10px; border-radius:999px;
+    background:var(--grad-soft); border:1px solid var(--line);
+    font-size:.8rem; font-weight:700; font-variant-numeric:tabular-nums; text-align:center;
+  }
+  #results .empty-row{padding:30px; text-align:center; color:var(--muted)}
+
+  #results .method{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:24px 26px; color:var(--muted); font-size:.95rem; line-height:1.7;
+  }
+  #results .method p{margin-bottom:11px}
+  #results .method p:last-child{margin-bottom:0}
+  #results .method strong{color:var(--ink)}
 
   @media(max-width:760px){
-    .drop{padding:32px 18px}
-    .res h2{font-size:1.25rem}
+    #results table{font-size:.88rem}
+    #results thead th,#results tbody td{padding:11px 13px}
+    #results td.q{max-width:200px}
   }
 </style>
 
@@ -220,16 +245,14 @@ import Footer from '../../components/Footer.astro';
     return { curve, source };
   }
 
-  const fmt = (n) => n >= 1000
-    ? Math.round(n).toLocaleString('en-US')
-    : (Math.round(n * 10) / 10).toLocaleString('en-US');
+  const fmt = (n) => Math.round(n).toLocaleString('en-US');
   const pct = (n) => (n * 100).toFixed(2) + '%';
   const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
 
   function table(headers, rows, emptyMsg) {
     if (!rows.length) return '<div class="tbl-wrap"><div class="empty-row">' + emptyMsg + '</div></div>';
     return '<div class="tbl-wrap"><table><thead><tr>' +
-      headers.map((h, i) => '<th' + (i ? ' style="text-align:right"' : '') + '>' + h + '</th>').join('') +
+      headers.map((h, i) => '<th class="' + (i ? 'num' : 'lbl') + '">' + h + '</th>').join('') +
       '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>';
   }
 
@@ -272,9 +295,9 @@ import Footer from '../../components/Footer.astro';
     ].map(([n, l]) => '<div class="stat"><div class="n">' + n + '</div><div class="l">' + l + '</div></div>').join('');
 
     $('t-striking').innerHTML = table(
-      [noun, 'Position', 'Impressions', 'Clicks', 'Clicks if pos. 8'],
+      [noun, 'Position', 'Impressions', 'Clicks now', 'Clicks at #8'],
       striking.map(r => '<tr><td class="q">' + esc(r.label) + '</td>' +
-        '<td class="num">' + r.position.toFixed(1) + '</td>' +
+        '<td class="num"><span class="pos">' + r.position.toFixed(1) + '</span></td>' +
         '<td class="num">' + fmt(r.impressions) + '</td>' +
         '<td class="num">' + fmt(r.clicks) + '</td>' +
         '<td class="num gain">+' + fmt(r.gain) + '</td></tr>'),
@@ -282,9 +305,9 @@ import Footer from '../../components/Footer.astro';
     );
 
     $('t-ctr').innerHTML = table(
-      [noun, 'Position', 'Impressions', 'CTR', 'Site median', 'Clicks left'],
+      [noun, 'Position', 'Impressions', 'CTR now', 'Site median', 'Clicks left'],
       losing.map(r => '<tr><td class="q">' + esc(r.label) + '</td>' +
-        '<td class="num">' + r.position.toFixed(1) + '</td>' +
+        '<td class="num"><span class="pos">' + r.position.toFixed(1) + '</span></td>' +
         '<td class="num">' + fmt(r.impressions) + '</td>' +
         '<td class="num">' + pct(r.ctr) + '</td>' +
         '<td class="num">' + pct(r.expected) + '</td>' +
