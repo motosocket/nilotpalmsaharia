@@ -165,12 +165,17 @@ h2{font-size:clamp(1.6rem,3.5vw,2.1rem); font-weight:700; margin-bottom:8px}
 
 /* about */
 .about-grid{display:grid; grid-template-columns:1.4fr 1fr; gap:34px; align-items:start}
+.about-side{display:grid; gap:24px}
+.about-photo{width:180px; height:180px; margin:0 auto; padding:4px; border-radius:50%;
+  background:var(--grad); box-shadow:var(--shadow-lg)}
+.about-photo img{width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;
+  background:var(--surface2)}
 .about p{color:var(--ink); margin-bottom:14px}
-.about .panel{background:var(--grad-soft); border:1px solid var(--line); border-radius:var(--radius); padding:26px}
-.about .panel h4{font-family:"Sora",sans-serif; font-size:.95rem; margin-bottom:12px; color:var(--brand-d)}
-.about .panel ul{list-style:none; display:grid; gap:9px}
-.about .panel li{padding-left:22px; position:relative; color:var(--ink); font-size:.95rem}
-.about .panel li::before{content:"✦"; position:absolute; left:0; color:var(--violet)}
+.about-grid .panel{background:var(--grad-soft); border:1px solid var(--line); border-radius:var(--radius); padding:26px}
+.about-grid .panel h4{font-family:"Sora",sans-serif; font-size:.95rem; margin-bottom:12px; color:var(--brand-d)}
+.about-grid .panel ul{list-style:none; display:grid; gap:9px}
+.about-grid .panel li{padding-left:22px; position:relative; color:var(--ink); font-size:.95rem}
+.about-grid .panel li::before{content:"✦"; position:absolute; left:0; color:var(--violet)}
 
 /* career timeline */
 .timeline{list-style:none; display:grid; gap:0; margin-top:6px; position:relative}
