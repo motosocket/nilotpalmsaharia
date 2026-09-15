@@ -14,7 +14,7 @@ import Footer from '../../components/Footer.astro';
   <Header />
 
   <main id="main">
-    <div class="wrap page-head">
+    <div class="wrap page-head tool-head">
       <p class="lead-label reveal"><span>Tool</span></p>
       <h1 class="reveal">Search Console Triage</h1>
       <p class="reveal">
@@ -86,6 +86,12 @@ import Footer from '../../components/Footer.astro';
 
 <style>
   /* Scoped: these elements exist in the template, so Astro's scoping reaches them. */
+  /* Centre the intro so it agrees with the drop zone below it. Scoped to
+     .tool-head so the blog index, which shares .page-head, stays left aligned. */
+  .tool-head{text-align:center}
+  .tool-head h1{margin-left:auto; margin-right:auto}
+  .tool-head p{margin-left:auto; margin-right:auto}
+
   .page-head .privacy{
     font-size:.95rem; background:var(--surface); border:1px solid var(--line);
     border-radius:12px; padding:14px 18px; margin-top:18px; max-width:640px;
