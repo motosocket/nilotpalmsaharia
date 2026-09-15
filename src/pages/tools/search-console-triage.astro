@@ -1,0 +1,408 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+// noindex, to match the homepage. This tool is part of the private portfolio.
+// Remove the prop if the site ever goes public and this should pull traffic.
+---
+<Layout
+  title="Search Console Triage | Nilotpal M. Saharia"
+  description="Drop a Google Search Console export and get the posts worth working on next. Runs entirely in your browser."
+  noindex={true}
+>
+  <Header />
+
+  <main id="main">
+    <div class="wrap page-head">
+      <p class="lead-label reveal"><span>Tool</span></p>
+      <h1 class="reveal">Search Console Triage</h1>
+      <p class="reveal">
+        Export your Search Console performance data, drop it here, and get the
+        three things worth acting on: what is close to page one, what is ranking
+        well but losing the click, and where the biggest recoverable clicks are.
+      </p>
+      <p class="privacy reveal">
+        <strong>Your file never leaves your browser.</strong> Parsing and analysis
+        run entirely on this page. Nothing is uploaded, stored, or sent anywhere.
+      </p>
+    </div>
+
+    <section class="blk" style="padding-top:22px">
+      <div class="wrap">
+
+        <div id="drop" class="drop reveal" tabindex="0" role="button"
+             aria-label="Drop a CSV or ZIP file here, or press Enter to browse">
+          <input type="file" id="file" accept=".csv,.zip" hidden />
+          <div class="drop-in">
+            <div class="drop-title">Drop <code>Queries.csv</code> or the export ZIP</div>
+            <div class="drop-sub">
+              Search Console &rsaquo; Performance &rsaquo; Export &rsaquo; CSV.
+              Pages.csv works too.
+            </div>
+            <div class="drop-actions">
+              <button type="button" class="btn primary" id="browse">Choose a file</button>
+              <button type="button" class="btn ghost" id="sample">Use sample data</button>
+            </div>
+          </div>
+        </div>
+
+        <p id="status" class="status" hidden></p>
+
+        <div id="results" hidden>
+          <div class="stats" id="summary"></div>
+
+          <div class="res">
+            <h2>Striking distance</h2>
+            <p class="sec-sub">
+              Ranking 11 to 20, with enough impressions to be worth a push. These
+              are already relevant to Google. They just are not on page one yet.
+            </p>
+            <div id="t-striking"></div>
+          </div>
+
+          <div class="res">
+            <h2>Losing the click</h2>
+            <p class="sec-sub">
+              Page one already, but the click-through rate sits well under what
+              this site normally earns at that position. That is usually a title
+              and meta description problem, not a ranking problem.
+            </p>
+            <div id="t-ctr"></div>
+          </div>
+
+          <div class="res">
+            <h2>How this works</h2>
+            <div class="method" id="method"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .page-head .privacy{
+    font-size:.95rem; background:var(--surface); border:1px solid var(--line);
+    border-radius:12px; padding:14px 18px; margin-top:18px; max-width:640px;
+  }
+  .drop{
+    border:2px dashed var(--line); border-radius:var(--radius); background:var(--surface);
+    padding:44px 26px; text-align:center; cursor:pointer;
+    transition:border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+  .drop:hover,.drop:focus-visible{border-color:var(--brand); background:var(--surface2)}
+  .drop.over{border-color:var(--brand); background:var(--surface2); transform:scale(1.01)}
+  .drop-title{font-family:"Sora",sans-serif; font-weight:700; font-size:1.15rem; margin-bottom:6px}
+  .drop-title code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.92em}
+  .drop-sub{color:var(--muted); font-size:.92rem; margin-bottom:20px}
+  .drop-actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  .drop-actions .btn{cursor:pointer; border:none; font-family:inherit}
+  .drop-actions .btn.ghost{border:1px solid var(--line)}
+
+  .status{margin-top:16px; font-size:.92rem; color:var(--muted)}
+  .status.err{color:var(--accent); font-weight:600}
+
+  #results{margin-top:30px}
+  #summary{margin-bottom:10px}
+  .res{margin-top:40px}
+  .res h2{font-size:1.4rem; margin-bottom:6px}
+
+  .tbl-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--surface); box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; font-size:.9rem; min-width:620px}
+  th,td{padding:12px 16px; text-align:left; border-bottom:1px solid var(--line)}
+  th{font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+    font-weight:700; white-space:nowrap; background:var(--surface2)}
+  tr:last-child td{border-bottom:none}
+  td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+  td.q{font-weight:500; max-width:420px; overflow-wrap:anywhere}
+  .gain{color:var(--brand); font-weight:700}
+  .empty-row{padding:26px; text-align:center; color:var(--muted)}
+
+  .method{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:24px 26px; color:var(--muted); font-size:.95rem}
+  .method p{margin-bottom:10px}
+  .method p:last-child{margin-bottom:0}
+  .method strong{color:var(--ink)}
+
+  @media(max-width:760px){
+    .drop{padding:32px 18px}
+    .res h2{font-size:1.25rem}
+  }
+</style>
+
+<script>
+  // ---------------------------------------------------------------
+  // Everything below runs in the visitor's browser. No network calls.
+  // ---------------------------------------------------------------
+
+  const $ = (id) => document.getElementById(id);
+  const drop = $('drop'), fileInput = $('file'), statusEl = $('status'), results = $('results');
+
+  // --- CSV parsing. Queries contain commas and quotes, so a split(',') will not do.
+  function parseCSV(text) {
+    text = text.replace(/^﻿/, '');              // strip BOM
+    const rows = []; let row = [], field = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+        else field += c;
+      } else if (c === '"') q = true;
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+      else if (c !== '\r') field += c;
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(r => r.some(c => c.trim() !== ''));
+  }
+
+  const num = (v) => { const n = parseFloat(String(v).replace(/[,\s%]/g, '')); return isNaN(n) ? 0 : n; };
+
+  // Match columns by name, then fall back to position. A non-English Search
+  // Console exports translated headers, so name matching alone is not enough.
+  function mapColumns(header) {
+    const h = header.map(x => x.trim().toLowerCase());
+    const find = (...names) => { for (const n of names) { const i = h.findIndex(c => c.includes(n)); if (i !== -1) return i; } return -1; };
+    let label = find('quer', 'page', 'top '), clicks = find('click'),
+        impr = find('impress'), ctr = find('ctr'), pos = find('position');
+    if (label === -1) label = 0;
+    if (clicks === -1) clicks = 1;
+    if (impr === -1) impr = 2;
+    if (ctr === -1) ctr = 3;
+    if (pos === -1) pos = 4;
+    const isPages = h[label] && h[label].includes('page');
+    return { label, clicks, impr, ctr, pos, isPages };
+  }
+
+  function toRows(csvText) {
+    const raw = parseCSV(csvText);
+    if (raw.length < 2) throw new Error('That file has no data rows.');
+    const col = mapColumns(raw[0]);
+    const rows = raw.slice(1).map(r => ({
+      label: (r[col.label] || '').trim(),
+      clicks: num(r[col.clicks]),
+      impressions: num(r[col.impr]),
+      ctr: num(r[col.ctr]) / 100,
+      position: num(r[col.pos]),
+    })).filter(r => r.label && r.position > 0);
+    if (!rows.length) throw new Error('No usable rows. Is this a Search Console performance export?');
+    return { rows, isPages: col.isPages };
+  }
+
+  // --- Self-calibrating CTR curve.
+  // Rather than impose an industry table, learn what THIS site earns at each
+  // position and compare against itself. Falls back to a published-style curve
+  // only where the site has too little data at that position to be reliable.
+  const FALLBACK = { 1:.27, 2:.15, 3:.11, 4:.08, 5:.06, 6:.045, 7:.035, 8:.03, 9:.025, 10:.022 };
+  const MIN_SAMPLE = 5;
+
+  function ctrCurve(rows) {
+    const buckets = {}, curve = {}, source = {};
+    rows.forEach(r => {
+      const p = Math.round(r.position);
+      if (p >= 1 && p <= 10 && r.impressions >= 20) (buckets[p] = buckets[p] || []).push(r.ctr);
+    });
+    for (let p = 1; p <= 10; p++) {
+      const b = (buckets[p] || []).sort((a, b) => a - b);
+      if (b.length >= MIN_SAMPLE) {
+        curve[p] = b[Math.floor(b.length / 2)];            // median, resists outliers
+        source[p] = 'your data (' + b.length + ' rows)';
+      } else {
+        curve[p] = FALLBACK[p];
+        source[p] = 'baseline, too few rows';
+      }
+    }
+    return { curve, source };
+  }
+
+  const fmt = (n) => n >= 1000
+    ? Math.round(n).toLocaleString('en-US')
+    : (Math.round(n * 10) / 10).toLocaleString('en-US');
+  const pct = (n) => (n * 100).toFixed(2) + '%';
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+  function table(headers, rows, emptyMsg) {
+    if (!rows.length) return '<div class="tbl-wrap"><div class="empty-row">' + emptyMsg + '</div></div>';
+    return '<div class="tbl-wrap"><table><thead><tr>' +
+      headers.map((h, i) => '<th' + (i ? ' style="text-align:right"' : '') + '>' + h + '</th>').join('') +
+      '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>';
+  }
+
+  function analyse(rows, isPages) {
+    const { curve, source } = ctrCurve(rows);
+    const noun = isPages ? 'Page' : 'Query';
+    const plural = isPages ? 'pages' : 'queries';
+
+    // Striking distance: positions 11-20. Model the gain conservatively by
+    // holding impressions flat, which understates it, since moving onto page
+    // one lifts impressions too.
+    const striking = rows
+      .filter(r => r.position >= 11 && r.position <= 20 && r.impressions >= 50)
+      .map(r => ({ ...r, gain: Math.max(0, r.impressions * curve[8] - r.clicks) }))
+      .sort((a, b) => b.gain - a.gain).slice(0, 25);
+
+    // Losing the click: on page one but well under this site's own median CTR
+    // for that position. 0.6 is a deliberately loose gate, so it flags real
+    // underperformance rather than ordinary variance.
+    const losing = rows
+      .filter(r => {
+        const p = Math.round(r.position);
+        return p >= 1 && p <= 10 && r.impressions >= 100 && r.ctr < curve[p] * 0.6;
+      })
+      .map(r => { const p = Math.round(r.position);
+        return { ...r, expected: curve[p], gain: Math.max(0, r.impressions * (curve[p] - r.ctr)) }; })
+      .sort((a, b) => b.gain - a.gain).slice(0, 25);
+
+    // Summary
+    const totalClicks = rows.reduce((s, r) => s + r.clicks, 0);
+    const totalImpr = rows.reduce((s, r) => s + r.impressions, 0);
+    const p1 = rows.filter(r => r.position <= 10).length;
+    const recoverable = striking.reduce((s, r) => s + r.gain, 0) + losing.reduce((s, r) => s + r.gain, 0);
+
+    $('summary').innerHTML = [
+      ['' + fmt(totalClicks), 'total clicks'],
+      ['' + fmt(totalImpr), 'total impressions'],
+      [p1 + ' / ' + rows.length, plural + ' on page one'],
+      ['~' + fmt(recoverable), 'clicks identified as recoverable'],
+    ].map(([n, l]) => '<div class="stat"><div class="n">' + n + '</div><div class="l">' + l + '</div></div>').join('');
+
+    $('t-striking').innerHTML = table(
+      [noun, 'Position', 'Impressions', 'Clicks', 'Clicks if pos. 8'],
+      striking.map(r => '<tr><td class="q">' + esc(r.label) + '</td>' +
+        '<td class="num">' + r.position.toFixed(1) + '</td>' +
+        '<td class="num">' + fmt(r.impressions) + '</td>' +
+        '<td class="num">' + fmt(r.clicks) + '</td>' +
+        '<td class="num gain">+' + fmt(r.gain) + '</td></tr>'),
+      'Nothing sitting in positions 11 to 20 with enough impressions to matter.'
+    );
+
+    $('t-ctr').innerHTML = table(
+      [noun, 'Position', 'Impressions', 'CTR', 'Site median', 'Clicks left'],
+      losing.map(r => '<tr><td class="q">' + esc(r.label) + '</td>' +
+        '<td class="num">' + r.position.toFixed(1) + '</td>' +
+        '<td class="num">' + fmt(r.impressions) + '</td>' +
+        '<td class="num">' + pct(r.ctr) + '</td>' +
+        '<td class="num">' + pct(r.expected) + '</td>' +
+        '<td class="num gain">+' + fmt(r.gain) + '</td></tr>'),
+      'No page-one rows are meaningfully under this site’s own CTR for their position.'
+    );
+
+    const learned = Object.keys(source).filter(p => source[p].startsWith('your')).length;
+    $('method').innerHTML =
+      '<p><strong>The CTR benchmark is built from your own data.</strong> For each position 1 to 10, ' +
+      'the tool takes the median CTR across your rows at that position and compares every row against it. ' +
+      'That avoids arguing about whose industry CTR table is right, and it adapts to your vertical, ' +
+      'your brand strength and your SERP features. ' + learned + ' of 10 positions had enough rows ' +
+      '(' + MIN_SAMPLE + '+) to calibrate from your file; the rest fall back to a generic curve.</p>' +
+      '<p><strong>Striking distance</strong> is positions 11 to 20 with at least 50 impressions. The ' +
+      'projected gain assumes the row reaches position 8 and holds impressions flat, so it understates ' +
+      'the real upside, because moving onto page one lifts impressions as well as clicks.</p>' +
+      '<p><strong>Losing the click</strong> is page-one rows with at least 100 impressions earning under ' +
+      '60% of the site median for their position. The gate is deliberately loose so it surfaces genuine ' +
+      'underperformance rather than ordinary week-to-week variance.</p>' +
+      '<p>Thresholds are judgment calls, not universal truths. They are the ones I use.</p>';
+
+    results.hidden = false;
+    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function setStatus(msg, isErr) {
+    statusEl.textContent = msg; statusEl.hidden = !msg;
+    statusEl.className = 'status' + (isErr ? ' err' : '');
+  }
+
+  function run(text, name) {
+    try {
+      const { rows, isPages } = toRows(text);
+      setStatus('Parsed ' + rows.length + ' rows from ' + name + '. Nothing was uploaded.', false);
+      analyse(rows, isPages);
+    } catch (e) {
+      results.hidden = true;
+      setStatus(e.message || 'Could not read that file.', true);
+    }
+  }
+
+  async function handleFile(f) {
+    if (!f) return;
+    if (/\.zip$/i.test(f.name)) {
+      setStatus('Reading ZIP…', false);
+      try {
+        // JSZip is only fetched if someone actually drops a ZIP.
+        if (!window.JSZip) await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+          s.onload = res; s.onerror = rej; document.head.appendChild(s);
+        });
+        const zip = await window.JSZip.loadAsync(f);
+        const names = Object.keys(zip.files);
+        const pick = names.find(n => /quer/i.test(n) && /\.csv$/i.test(n))
+                  || names.find(n => /page/i.test(n) && /\.csv$/i.test(n))
+                  || names.find(n => /\.csv$/i.test(n));
+        if (!pick) return setStatus('No CSV inside that ZIP.', true);
+        run(await zip.files[pick].async('string'), pick);
+      } catch (err) {
+        setStatus('Could not open the ZIP. Unzip it and drop Queries.csv instead.', true);
+      }
+      return;
+    }
+    run(await f.text(), f.name);
+  }
+
+  drop.addEventListener('click', (e) => { if (e.target.tagName !== 'BUTTON') fileInput.click(); });
+  drop.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+  $('browse').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+  ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+
+  // Synthetic data, so the tool is usable by someone who has no export to hand.
+  // Invented figures for a fictional B2B SaaS blog.
+  $('sample').addEventListener('click', () => {
+    const rows = [
+      ['project management software for agencies',1240,41800,'2.97%','4.2'],
+      ['how to run a retrospective',980,52100,'1.88%','6.1'],
+      ['okr examples for marketing teams',12,28400,'0.04%','14.8'],
+      ['sprint planning template',430,16200,'2.65%','7.4'],
+      ['best time tracking tools',38,31900,'0.12%','12.3'],
+      ['remote onboarding checklist',610,9800,'6.22%','3.1'],
+      ['what is capacity planning',25,22700,'0.11%','16.2'],
+      ['agile ceremonies explained',188,44300,'0.42%','9.6'],
+      ['resource allocation spreadsheet',44,13800,'0.32%','11.4'],
+      ['team velocity calculation',72,7400,'0.97%','13.9'],
+      ['project kickoff meeting agenda',890,14100,'6.31%','2.8'],
+      ['gantt chart alternatives',31,19600,'0.16%','15.1'],
+      ['scrum vs kanban',210,61200,'0.34%','8.9'],
+      ['workload management tips',96,11300,'0.85%','12.8'],
+      ['client reporting dashboard',54,8900,'0.61%','11.9'],
+      ['how to estimate project hours',340,25600,'1.33%','7.9'],
+      ['stakeholder communication plan',128,10400,'1.23%','10.2'],
+      ['burndown chart explained',58,15700,'0.37%','13.2'],
+      ['project risk register template',402,6200,'6.48%','3.4'],
+      ['agency utilization rate',19,9100,'0.21%','17.4'],
+      ['daily standup questions',1510,23800,'6.34%','2.2'],
+      ['milestone tracking software',27,12600,'0.21%','14.1'],
+      ['project charter example',660,18900,'3.49%','5.6'],
+      ['cross functional team structure',143,20100,'0.71%','9.1'],
+      ['billable hours calculator',84,10800,'0.78%','11.2'],
+      ['change request process',205,7600,'2.70%','6.8'],
+      ['project status report template',1120,21400,'5.23%','3.8'],
+      ['team capacity planning template',36,14900,'0.24%','12.6'],
+      ['waterfall vs agile',174,38500,'0.45%','9.8'],
+      ['scope creep examples',298,9300,'3.20%','5.9'],
+      ['resource forecasting methods',22,6800,'0.32%','15.8'],
+      ['pmo best practices',91,13200,'0.69%','10.6'],
+      ['project dependencies mapping',48,8100,'0.59%','11.7'],
+      ['weekly team meeting agenda',760,16800,'4.52%','4.6'],
+      ['effort estimation techniques',63,11900,'0.53%','12.1'],
+    ];
+    const csv = 'Top queries,Clicks,Impressions,CTR,Position\n' +
+      rows.map(r => '"' + r[0] + '",' + r[1] + ',' + r[2] + ',' + r[3] + ',' + r[4]).join('\n');
+    run(csv, 'sample-data.csv');
+  });
+</script>
